@@ -3,11 +3,22 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
     module.exports = {
         entry: {
-          app: './src/index.js',
+          app: './src/main.js',
            },
+        module: {
+        rules: [
+            {
+                test: /\.css$/,
+                use: ["style-loader", "css-loader"],
+            }
+        ]
+        },
     plugins: [
          new HtmlWebpackPlugin({
-               title: 'Production',
+               title: "Notes.app",
+             favicon: "./src/assets/favicon.ico",
+             template: "./src/index.html",
+             inject: "body"
          }),
    ],
    output: {
