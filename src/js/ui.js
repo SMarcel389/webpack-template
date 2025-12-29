@@ -1,7 +1,7 @@
 import {noteApp} from "./logic"
 import Button from "./components/button";
-import {NoteCard, FolderCard} from "./components/cards";
-import projectModal from "./components/modal";
+import addProject from "./components/addProject"
+
 
 export default function renderApp() {
 
@@ -9,27 +9,14 @@ export default function renderApp() {
   let notes = app.noteList;
   let folders = app.folderList;
 
-  let note = app.createNote("name", "name", "name", "name", "folder")
-  console.log(notes)
-  let note2 = app.createNote("name", "name", "name", "name", "different")
-  console.log(notes)
-  console.log(app.getNotesByFolder("folder"))
-  console.log(notes)
+  console.log(folders)
 
   let projects = document.querySelector(".sidebar-body");
 
-  const addProjectBtn = new Button("+ Add Project", () => {
-    projectModal();
-  },
+  const addProjectBtn = new Button("+ Add Project", () => addProject(app, projects),
   {
     parent: projects
   })
 
-
-
-
-
-
-
+console.log(folders)
 }
-

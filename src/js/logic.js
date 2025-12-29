@@ -69,7 +69,6 @@ export class noteApp {
     createFolder(name, dueDate, color) {
         let folder = new Folder(name, dueDate, color);
         this.folderList.push(folder);
-        console.log("hello")
         return folder;
     }
     getNotesByFolder(folder = "root") {

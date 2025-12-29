@@ -76,11 +76,22 @@ main{
 }
 
 dialog{
-    padding: 200px;
     background-color: mediumaquamarine;
     place-self: center;
     text-align: center;
+    display:flex;
+    flex-direction: column;
+
     &::backdrop {
         backdrop-filter: blur(2px);
     }
 }
+
+dialog form {
+    display:flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+}
+
+

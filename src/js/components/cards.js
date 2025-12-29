@@ -1,19 +1,35 @@
-import Button from "./button";
-
 export class NoteCard { //card title, description, due, priority
   constructor(note) {
     this.card = this.init(note)
   }
 
   init(note) {
-    let card = document.createElement("div")
-    card.className = "note-card"
-    card.innerHTML = `
-			<div class="card-header">
-				<h1 class="title"> ${note.name} </h1>
-			</div>
-			<p class="subtext">${note.dueDate}</p>
-		`
+    let card = document.createElement("div");
+    Object.assign(card, {
+      className: "note-card"
+    });
+
+    const header = document.createElement("div");
+    Object.assign(header, {
+      className: "card-header"
+    });
+
+    const title = document.createElement("h1");
+    Object.assign(title, {
+      className: "title",
+      textContent: note.name
+    });
+
+    header.appendChild(title);
+    card.appendChild(header);
+
+    const subtext = document.createElement("p");
+    Object.assign(subtext, {
+      className: "subtext",
+      textContent: note.dueDate
+    });
+    card.appendChild(subtext);
+
     card.style.cssText = `
 		  background-color: yellow;
 		  border: 1px solid green;
@@ -28,19 +44,38 @@ export class NoteCard { //card title, description, due, priority
 
 export class FolderCard {
   constructor(folder) {
-    this.card = this.init()
+    this.card = this.init(folder)
   }
   
   init(folder) {
     let card = document.createElement("div");
     card.className = "folder-card";
-    card.innerHTML = `
-      <div class="card-header">
-      <h1 class="title"> ${folder.name} </h1>
-      </div>
-      <p class="subtext">${folder.dueDate}</p>
-    `
+    card.style.borderLeft = `10px solid ${folder.color}`;
+
+    const header = document.createElement("div");
+    header.className = "card-header"
+    card.appendChild(header);
+
+    const title = document.createElement("h1");
+    Object.assign(title, {
+      className: "title",
+      textContent: folder.name
+    });
+    header.appendChild(title);
+
+
+    const subtext = document.createElement("p");
+    Object.assign(subtext, {
+      className: "subtext",
+      textContent: folder.dueDate
+    });
+    card.appendChild(subtext);
+
     return card
+  }
+
+  render(parent) {
+    parent.appendChild(this.card);
   }
 }
 
