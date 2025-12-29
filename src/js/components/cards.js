@@ -1,6 +1,7 @@
 export class NoteCard { //card title, description, due, priority
   constructor(note) {
-    this.card = this.init(note)
+    this.note = note;
+    this.card = this.init(this.note)
   }
 
   init(note) {
@@ -44,12 +45,15 @@ export class NoteCard { //card title, description, due, priority
 
 export class FolderCard {
   constructor(folder) {
-    this.card = this.init(folder)
+    this.folder = folder;
+    this.card = this.init(this.folder)
+    this.active = true;
   }
   
   init(folder) {
     let card = document.createElement("div");
-    card.className = "folder-card";
+    card.className = `folder-card`;
+    card.dataset.uuid = folder.uuid;
     card.style.borderLeft = `10px solid ${folder.color}`;
 
     const header = document.createElement("div");
@@ -71,10 +75,18 @@ export class FolderCard {
     });
     card.appendChild(subtext);
 
+
     return card
   }
 
   render(parent) {
+    if (this.active) {
+      this.card.classList.add("active")
+      this.card.classList.remove("inactive")
+    } else {
+      this.card.classList.remove("active")
+      this.card.classList.add("inactive")
+    }
     parent.appendChild(this.card);
   }
 }

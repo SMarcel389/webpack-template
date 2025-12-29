@@ -29,6 +29,17 @@ body {
     background-color: pink;
     display: flex;
     flex-direction: column;
+
+    .folder-card{
+        background-color: white;
+
+        &.active{
+            background-color:green;
+        }
+        &.inactive{
+            background-color:palevioletred;
+        }
+    }
 }
 .sidebar-body button {
     padding: 1rem 0;
@@ -93,5 +104,7 @@ dialog form {
     padding: 1rem;
     gap: 1rem;
 }
+
+
 
 

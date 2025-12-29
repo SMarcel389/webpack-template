@@ -4,11 +4,15 @@ import {FolderCard} from "./cards";
 
 export default async function addProject(app, projects) {
   try {
+
     const cardInput = await projectModal()
+
+
+
     let folder = app.createFolder(...cardInput)
-    console.log(folder);
     let folderCard = new FolderCard(folder);
     folderCard.render(projects)
+    return folder
   }
   catch (error) {
     console.log(error)
@@ -17,8 +21,6 @@ export default async function addProject(app, projects) {
 
 function projectModal(){
   return new Promise((resolve, reject)=>{
-
-
 
   let now = new Date();
   let nowFormatted = now.toISOString().slice(0, 16);
