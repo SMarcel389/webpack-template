@@ -1,7 +1,7 @@
 export class Note {
-  constructor(name, content, dueDate, priority, folder = "root") {
+  constructor(name, content, dueDate, priority, parentId = "0") {
     this.name = name;
-    this.id = "id-" + Date.now();
+    this.uuid = "id-" + Date.now();
     this.content = content;
     this.dueDate = dueDate;
     this.priority = priority;
@@ -9,7 +9,8 @@ export class Note {
     this.author = "defaultUser";
     this.created = new Date();
     this.lastEdit = this.created;
-    this.folder = folder;
+    this.parentId = parentId;
+    this.active = true;
   }
 
   rename(newName) {
@@ -20,8 +21,8 @@ export class Note {
     this.content = newContent;
     this._newLastEdit()
   }
-  moveTo(newFolder) {
-    this.folder = newFolder
+  moveTo(newFolderId) {
+    this.parentId = newFolderId
   }
 
   _newLastEdit() {
@@ -59,7 +60,7 @@ export class noteApp {
   constructor() {
     this.noteList = [];
     this.folderList = [];
-    this.createFolder("root")
+    this.createFolder("0")
   }
 
   createNote(name, content, dueDate, priority, parentId) {
@@ -72,11 +73,11 @@ export class noteApp {
     this.folderList.push(folder);
     return folder;
   }
-  getNotesByFolder(folder = "root") {
-    return this.noteList.filter(note => note.folder === folder);
+  getNotesByFolder(folderID = "0") {
+    return this.noteList.filter(note => note.parentId === folderID);
   }
   deleteNote(id) {
-    this.noteList = this.noteList.filter(note => note.id !== id);
+    this.noteList = this.noteList.filter(note => note.uuid !== id);
   }
 }
 

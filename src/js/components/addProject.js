@@ -12,6 +12,10 @@ export default async function addProject(app, projects) {
     let folder = app.createFolder(...cardInput)
     let folderCard = new FolderCard(folder);
     folderCard.render(projects)
+
+    const CardID = folderCard.card.dataset.uuid;
+    const folderCardElement = document.querySelector("[data-uuid='" + CardID + "']")
+    folderCardElement.click()
     return folder
   }
   catch (error) {

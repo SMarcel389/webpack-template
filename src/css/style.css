@@ -41,7 +41,7 @@ body {
         }
     }
 }
-.sidebar-body button {
+.actionButton {
     padding: 1rem 0;
 }
 
@@ -76,8 +76,22 @@ main{
     flex: 1 3 auto;
     min-width: 10rem;
     max-width: 25rem;
-    background-color: whitesmoke;
+    background-color: red;
 
+    display:flex;
+    flex-direction: column;
+
+    .note-card{
+        background-color: lightblue;
+
+        &.active{
+            background-color:darkseagreen;
+        }
+    }
+}
+
+.note-card {
+    background-color: purple;
 }
 .pad{
     min-width: 20rem;
