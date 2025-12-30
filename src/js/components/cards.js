@@ -1,8 +1,10 @@
 export class NoteCard { //card title, description, due, priority
-  constructor(note) {
+  constructor(note, onDelete) {
     this.note = note;
+    this.onDelete = onDelete;
     this.card = this.init(this.note)
     this.active = true;
+    this.deleteHandler = null;
   }
 
   init(note) {
@@ -22,6 +24,22 @@ export class NoteCard { //card title, description, due, priority
     });
 
     header.appendChild(title);
+
+    // Add delete button
+    const deleteBtn = document.createElement("button");
+    Object.assign(deleteBtn, {
+      className: "delete-btn",
+      textContent: "×"
+    });
+    this.deleteHandler = (e) => {
+      e.stopPropagation();
+      if (this.onDelete) {
+        this.onDelete(note.uuid);
+      }
+    };
+    deleteBtn.addEventListener("click", this.deleteHandler);
+    header.appendChild(deleteBtn);
+
     card.appendChild(header);
 
     const subtext = document.createElement("p");
@@ -43,15 +61,25 @@ export class NoteCard { //card title, description, due, priority
     parent.prepend(this.card);
   }
 
+  destroy() {
+    const deleteBtn = this.card.querySelector(".delete-btn");
+    if (deleteBtn && this.deleteHandler) {
+      deleteBtn.removeEventListener("click", this.deleteHandler);
+    }
+    this.card.remove();
+  }
+
 }
 
 export class FolderCard {
-  constructor(folder) {
+  constructor(folder, onDelete) {
     this.folder = folder;
+    this.onDelete = onDelete;
     this.card = this.init(this.folder)
-    this.active = true;
+    this.active = folder.active || false;
+    this.deleteHandler = null;
   }
-  
+
   init(folder) {
     let card = document.createElement("div");
     card.className = `folder-card`;
@@ -69,6 +97,20 @@ export class FolderCard {
     });
     header.appendChild(title);
 
+    // Add delete button
+    const deleteBtn = document.createElement("button");
+    Object.assign(deleteBtn, {
+      className: "delete-btn",
+      textContent: "×"
+    });
+    this.deleteHandler = (e) => {
+      e.stopPropagation();
+      if (this.onDelete) {
+        this.onDelete(folder.uuid);
+      }
+    };
+    deleteBtn.addEventListener("click", this.deleteHandler);
+    header.appendChild(deleteBtn);
 
     const subtext = document.createElement("p");
     Object.assign(subtext, {
@@ -92,21 +134,12 @@ export class FolderCard {
     parent.prepend(this.card);
   }
 
+  destroy() {
+    const deleteBtn = this.card.querySelector(".delete-btn");
+    if (deleteBtn && this.deleteHandler) {
+      deleteBtn.removeEventListener("click", this.deleteHandler);
+    }
+    this.card.remove();
+  }
+
 }
-
-
-/* note methods:
-	this.name = name;
-  this.id = "id-" + Date.now();
-  this.content = content;
-  this.dueDate = dueDate;
-  this.priority = priority;
-
-  this.author = "defaultUser";
-  this.created = new Date();
-  this.lastEdit = this.created;
-  this.folder = folder;
-
-
-        Folder {
-    constructor(name, dueDate, color = "yellow")*/

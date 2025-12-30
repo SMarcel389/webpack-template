@@ -2,7 +2,7 @@ import ColorPicker from "../../vendor/colorpicker/colorpicker.min"
 
 import {FolderCard} from "./cards";
 
-export default async function addProject(app, projects) {
+export default async function addProject(app, projects, onDelete) {
   try {
 
     const cardInput = await projectModal()
@@ -10,7 +10,7 @@ export default async function addProject(app, projects) {
 
 
     let folder = app.createFolder(...cardInput)
-    let folderCard = new FolderCard(folder);
+    let folderCard = new FolderCard(folder, onDelete);
     folderCard.render(projects)
 
     const CardID = folderCard.card.dataset.uuid;

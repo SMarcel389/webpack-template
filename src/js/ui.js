@@ -1,6 +1,6 @@
 import Button from "./components/button";
 import {noteApp} from "./logic"
-import {NoteCard} from "./components/cards";
+import {NoteCard, FolderCard} from "./components/cards";
 
 
 import addProject from "./components/addProject"
@@ -13,23 +13,94 @@ export default function renderApp() {
 
   const app = new noteApp();
 
-
-  let notes = app.noteList;
-  let folders = app.folderList;
-
-   let activeFolder = folders[0];
+  let activeFolder = app.folderList[0];
   let activeNote = undefined;
 
   let sidebarButton =document.querySelector(".sidebar-button");
   let projectsContainer = document.querySelector(".project-container");
   let projects = document.querySelector(".sidebar-body");
+  let notebar = document.querySelector(".notebar");
+  let noteSection = document.querySelector(".note-section");
+
+  // Helper function to render notes for a folder
+  function renderNotesForFolder(folder) {
+    notebar.replaceChildren();
+    let notesOfActive = app.getNotesByFolder(folder.uuid);
+    notesOfActive.forEach(note => {
+      let noteCard = new NoteCard(note, handleDeleteNote);
+      noteCard.render(notebar);
+    });
+  }
+
+  // Reset all folders to inactive, then set first as active
+  app.folderList.forEach(folder => folder.active = false);
+  if (app.folderList.length > 0) {
+    app.folderList[0].active = true;
+    activeFolder = app.folderList[0];
+  }
+
+  // Delete handler for folders
+  function handleDeleteFolder(folderId) {
+    app.deleteFolder(folderId);
+
+    // Remove card from DOM
+    const cardToRemove = projects.querySelector(`[data-uuid="${folderId}"]`);
+    if (cardToRemove) {
+      cardToRemove.remove();
+    }
+
+    // Clear note section and whitepad
+    notebar.replaceChildren();
+    document.querySelector(".whitepad").replaceChildren();
+
+    // Set new active folder if needed
+    if (activeFolder?.uuid === folderId && app.folderList.length > 0) {
+      app.folderList[0].active = true;
+      activeFolder = app.folderList[0];
+      const firstCard = projects.querySelector(`[data-uuid="${activeFolder.uuid}"]`);
+      if (firstCard) {
+        firstCard.classList.add("active");
+      }
+      createAddNoteBtn(activeFolder);
+      renderNotesForFolder(activeFolder);
+    }
+  }
+
+  // Delete handler for notes
+  function handleDeleteNote(noteId) {
+    app.deleteNote(noteId);
+
+    // Remove card from DOM
+    const cardToRemove = notebar.querySelector(`[data-uuid="${noteId}"]`);
+    if (cardToRemove) {
+      cardToRemove.remove();
+    }
+
+    // Clear whitepad if deleted note was active
+    if (activeNote?.uuid === noteId) {
+      document.querySelector(".whitepad").replaceChildren();
+      activeNote = undefined;
+    }
+  }
+
+  // Render loaded folders on startup
+  app.folderList.forEach(folder => {
+    let folderCard = new FolderCard(folder, handleDeleteFolder);
+    folderCard.render(projects);
+  });
+
+  // Render notes for active folder
+  if (app.folderList.length > 0) {
+    createAddNoteBtn(activeFolder);
+    renderNotesForFolder(activeFolder);
+  }
 
 
 
 
   //create project
   const addProjectBtn = new Button("+ Add Project", async () => {
-    activeFolder = await addProject(app, projects);
+    activeFolder = await addProject(app, projects, handleDeleteFolder);
     },
   {
     parent: sidebarButton
@@ -49,29 +120,18 @@ export default function renderApp() {
       clicked.classList.add("active")
       //find active folder
       const clickedUUID = clicked.dataset.uuid;
-      folders.forEach(folder => {
+      app.folderList.forEach(folder => {
         folder.active = (folder.uuid === clickedUUID)
       });
-      activeFolder = folders.find(folder => (folder.active))
+      activeFolder = app.folderList.find(folder => (folder.active))
 
       //create add note button
       createAddNoteBtn(activeFolder);
       //render notes of the active folder
-      let notesOfActive = notes.filter(note => note.parentId === activeFolder.uuid)
-      notebar.replaceChildren()
-      notesOfActive.forEach(note => {
-        let noteCard = new NoteCard(note)
-        noteCard.render(notebar)
-
-
-
-      })
+      renderNotesForFolder(activeFolder);
     }
   })
 
-  //CREATE NOTES
-  let notebar = document.querySelector(".notebar");
-  let noteSection = document.querySelector(".note-section");
 
   //Change note card
   noteSection.addEventListener("click", (e) => {
@@ -84,15 +144,12 @@ export default function renderApp() {
       clicked.classList.add("active")
 
       const clickedUUID = clicked.dataset.uuid;
-      notes.forEach(note => {
+      app.noteList.forEach(note => {
         note.active = (note.uuid === clickedUUID)
       });
-      activeNote = notes.find(note => (note.active))
+      activeNote = app.noteList.find(note => (note.active))
 
-
-      const pad = new Pad(activeNote);
-
-
+      const pad = new Pad(activeNote, app);
     }
   })
 
@@ -108,7 +165,7 @@ export default function renderApp() {
     noteSection.prepend(addNoteBtn);
 
     addNoteBtn.addEventListener("click", async () => {
-      activeNote = await addNote(app, notebar, activeFolder);
+      activeNote = await addNote(app, notebar, activeFolder, handleDeleteNote);
     })}
 }
 

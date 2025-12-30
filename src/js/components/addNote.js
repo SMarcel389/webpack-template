@@ -1,13 +1,13 @@
 import {NoteCard} from "./cards";
 
 
-export default async function addNote(app, notebar, activeFolder) {
+export default async function addNote(app, notebar, activeFolder, onDelete) {
   try {
 
     const noteInput = await noteModal()
     const [noteName, noteDate, notePriority] = noteInput;
     let note = app.createNote(noteName, "", noteDate, notePriority, activeFolder.uuid)
-    let noteCard = new NoteCard(note)
+    let noteCard = new NoteCard(note, onDelete)
     noteCard.render(notebar)
 
     const CardID = noteCard.card.dataset.uuid;
